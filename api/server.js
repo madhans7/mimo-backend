@@ -974,6 +974,11 @@ app.get("/download/:id", async (req, res) => {
   }
 });
 // ================= START =================
-app.listen(process.env.PORT || 3000, () => {
-  console.log("🚀 Server running");
-});
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Local server running on port ${PORT}`);
+  });
+}
+
+module.exports = app;
