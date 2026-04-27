@@ -21,15 +21,24 @@ if (process.env.FIREBASE_PRIVATE_KEY) {
   };
   credential = admin.credential.cert(serviceAccount);
 } else {
-  // Local development: load from file
-  const serviceAccount = require("./serviceAccountKey.json");
-  credential = admin.credential.cert(serviceAccount);
+  // Local development: load from file if it exists, otherwise log error
+  try {
+    const serviceAccount = require("./serviceAccountKey.json");
+    credential = admin.credential.cert(serviceAccount);
+  } catch (err) {
+    console.error("❌ CRITICAL: No Firebase credentials found (Env vars or JSON file)");
+    // Don't crash immediately, allow server to start but log the error
+  }
 }
 
-admin.initializeApp({
-  credential,
-  storageBucket: "mimo-v2-11868.firebasestorage.app",
-});
+if (credential) {
+  admin.initializeApp({
+    credential,
+    storageBucket: "mimo-v2-11868.firebasestorage.app",
+  });
+} else {
+  console.error("❌ Firebase NOT initialized - check your environment variables!");
+}
 
 const db = admin.firestore();
 const bucket = admin.storage().bucket();
