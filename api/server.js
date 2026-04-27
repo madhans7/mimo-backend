@@ -593,7 +593,7 @@ app.post("/create-order", authenticateToken, async (req, res) => {
           customer_phone: "9999999999",
         },
         order_meta: {
-          return_url: "http://localhost:5173/payment-verify?order_id={order_id}"
+          return_url: `${process.env.FRONTEND_URL || "http://localhost:5173"}/payment-verify?order_id={order_id}`
         },
       },
       { headers: cashfreeHeaders }
