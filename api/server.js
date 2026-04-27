@@ -20,18 +20,22 @@ const { admin, db, bucket } = require("./firebase");
 
 // ================= APP =================
 const app = express();
-app.use(express.json({ limit: "100mb" }));
+
+// 1. MUST BE FIRST: CORS
 app.use(cors({
   origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-// Test route to check if backend is alive
+// 2. Body Parsers
+app.use(express.json({ limit: "100mb" }));
+app.use(express.urlencoded({ extended: true }));
+
+// 3. Health Checks
 app.get("/", (req, res) => res.send("Mimo Backend is LIVE 🚀"));
 app.get("/test-cors", (req, res) => res.json({ message: "CORS is working!" }));
 
-app.use(express.json());
 const upload = multer({ storage: multer.memoryStorage() });
 const SECRET_KEY = process.env.JWT_SECRET;
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
